@@ -1,6 +1,6 @@
 use tokio::sync::broadcast;
 
-use crate::message::ServerPayload;
+use common::message::ServerPayload;
 
 #[derive(Debug, Clone)]
 pub enum ServerEvent {

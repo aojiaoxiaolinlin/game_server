@@ -1,16 +1,23 @@
-use std::{net::SocketAddr, time::Duration};
+mod actor;
+mod events;
+mod session;
+mod status;
 
+use actor::{ActorMessage, PlayerActor};
+use common::{
+    message::{ClientMessage, ClientPayload, GameMessageCodec, ServerMessage, ServerPayload},
+    security::genenrate_token,
+};
+use events::EventBus;
+use events::ServerEvent;
 use futures_util::{
     SinkExt, StreamExt,
     stream::{SplitSink, SplitStream},
 };
-use tcp_server::{
-    actor::{ActorMessage, PlayerActor},
-    events::{EventBus, ServerEvent},
-    message::{ClientMessage, ClientPayload, GameMessageCodec, ServerMessage, ServerPayload},
-    security::genenrate_token,
-    session::SessionManager,
-};
+use std::{net::SocketAddr, time::Duration};
+
+use session::SessionManager;
+
 use tokio::{
     net::{TcpListener, TcpStream},
     sync::{broadcast, mpsc},
@@ -82,7 +89,7 @@ async fn process(
             frame = stream.next()=>{
                 match frame {
                     Some(Ok(frame)) => {
-                        actor_sender.send(tcp_server::actor::ActorMessage::ClientMessage(frame)).await?;
+                        actor_sender.send(ActorMessage::ClientMessage(frame)).await?;
                     }
                     Some(Err(e)) => {
                         println!("读取消息失败: {:?}", e);

@@ -2,10 +2,13 @@ use tokio::sync::mpsc;
 
 use crate::{
     events::{EventBus, ServerEvent},
-    message::{ClientAction, ClientMessage, ClientPayload, ServerPayload},
-    security::validate_token,
     session::SessionManager,
     status::PlayerSession,
+};
+
+use common::{
+    message::{ClientAction, ClientMessage, ClientPayload, ServerPayload},
+    security::validate_token,
 };
 
 #[derive(Debug)]
@@ -77,7 +80,7 @@ impl PlayerActor {
         }
     }
 
-    async fn handle_client_action(&mut self, action: crate::message::ClientAction) {
+    async fn handle_client_action(&mut self, action: ClientAction) {
         match action {
             ClientAction::Chat { content } => {
                 // 处理聊天消息

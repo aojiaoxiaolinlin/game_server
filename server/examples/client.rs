@@ -1,7 +1,5 @@
+use common::message::{ClientMessage, ClientPayload, GameMessageCodec, ServerMessage};
 use futures_util::{SinkExt, StreamExt};
-use tcp_server::message::{
-    ClientAction, ClientMessage, ClientPayload, GameMessageCodec, ServerMessage, ServerPayload,
-};
 use tokio::net::TcpStream;
 use tokio_util::codec::Framed;
 
@@ -26,7 +24,7 @@ async fn main() -> anyhow::Result<()> {
         payload: msg,
     };
 
-    // framed.send(msg).await?;
+    framed.send(msg).await?;
 
     // 接收服务端响应
     while let Some(msg) = framed.next().await {
