@@ -64,6 +64,10 @@ pub enum ServerPayload {
     AuthFailed,
 }
 
+/// 游戏消息编码器/解码器
+///
+/// 编码器：将 `S` 类型的消息序列化为字节流
+/// 解码器：从字节流中反序列化出 `R` 类型的消息
 pub struct GameMessageCodec<S, R>
 where
     S: Serialize,
