@@ -39,4 +39,12 @@ impl SessionManager {
         let sessions = self.sessions.read().await;
         sessions.get(&id).cloned()
     }
+
+    pub async fn send_message(&self, id: u64, message: ActorMessage) {
+        if let Some(session) = self.get_session(id).await {
+            session.send(message).await;
+        } else {
+            println!("[SessionManager] 玩家 {} 不存在", id);
+        }
+    }
 }

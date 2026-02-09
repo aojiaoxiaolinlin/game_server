@@ -9,8 +9,10 @@ use tokio_util::{
     codec::{Decoder, Encoder},
 };
 
+use crate::sprites::Sprite;
+
 /// 客户端发往服务端的消息结构
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ClientMessage {
     /// 消息序列号，用于防止"重放攻击"
     pub sequence: u64,
@@ -18,7 +20,7 @@ pub struct ClientMessage {
 }
 
 /// 客户端请求载体
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ClientPayload {
     /// 心跳检测，
     Ping,
@@ -34,10 +36,37 @@ pub enum ClientPayload {
     },
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ClientAction {
-    Chat { content: String },
-    Move { x: f32, y: f32, z: f32 },
+    Chat {
+        content: String,
+    },
+    Move {
+        x: f32,
+        y: f32,
+        z: f32,
+    },
+    /// 客户端请求加载出战的6只精灵数据
+    SpriteTeam,
+    /// 对战中, 玩家提交操作
+    RoomAction(RoomAction),
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+pub enum RoomAction {
+    /// 玩家提交技能
+    SkillAttack { player_id: u64, skill_id: u64 },
+    /// 玩家切换精灵
+    SwitchSprite { player_id: u64, sprite_index: usize },
+    /// 玩家使用道具(加HP/加PP)
+    UseItem { player_id: u64, item_id: u64 },
+    /// 玩家使用捕捉
+    /// 1. 检查是否有精灵可以捕捉
+    /// 2. 检查是否有空间可以存放捕捉到的精灵
+    /// 3. 捕捉精灵
+    CatchSprite,
+    /// 逃跑
+    Escape(u64),
 }
 
 /// 服务端发往客户端的消息结构
@@ -62,6 +91,8 @@ pub enum ServerPayload {
     LoginFailed,
     /// 认证失败
     AuthFailed,
+    /// 精灵队伍
+    SpriteTeam(Vec<Sprite>),
 }
 
 /// 游戏消息编码器/解码器

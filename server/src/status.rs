@@ -2,6 +2,7 @@
 pub struct PlayerSession {
     // ... other fields like player_id, stream
     player_id: u64,
+    room_id: Option<u64>,
     last_client_sequence: u64,
     server_sequence: u64,
 }
@@ -10,6 +11,7 @@ impl PlayerSession {
     pub fn new(player_id: u64, last_client_sequence: u64, server_sequence: u64) -> Self {
         Self {
             player_id,
+            room_id: None,
             last_client_sequence,
             server_sequence,
         }
@@ -33,5 +35,13 @@ impl PlayerSession {
 
     pub fn server_sequence_increment(&mut self) {
         self.server_sequence += 1;
+    }
+
+    pub fn set_room_id(&mut self, room_id: u64) {
+        self.room_id = Some(room_id);
+    }
+
+    pub fn room_id(&self) -> Option<u64> {
+        self.room_id
     }
 }

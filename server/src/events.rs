@@ -1,6 +1,6 @@
 use tokio::sync::broadcast;
 
-use common::message::ServerPayload;
+use common::{message::ServerPayload, sprites::Sprite};
 
 #[derive(Debug, Clone)]
 pub enum ServerEvent {
@@ -8,6 +8,27 @@ pub enum ServerEvent {
     SendMessageToPlayer {
         player_id: u64,
         payload: ServerPayload,
+    },
+    PlayerReadyForMatchmaking {
+        player_id: u64,
+    },
+    /// 匹配成功，通知系统创建对战房间
+    MatchFound {
+        players: [u64; 2],
+    },
+    /// 房间创建成功
+    RoomCreated {
+        room_id: u64,
+        players: [u64; 2],
+    },
+    /// 关闭/销毁房间
+    CloseRoom {
+        room_id: u64,
+    },
+    /// 玩家准备好开始游戏
+    RequestSpriteTeam {
+        player_id: u64,
+        room_id: u64,
     },
 }
 
